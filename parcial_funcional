@@ -1,0 +1,52 @@
+import Text.Show.Functions
+
+type Especialidad = Monstruo -> Bool
+
+data Monstruo = UnMonstruo {tamanio::Double,peligrosidad::Double,caracteristicas::[String]} deriving(Show)
+
+data Cazador = UnCazador {nombre::String,medallas::Int,puntaje::Double,especialidad::Especialidad} deriving(Show)
+
+-- Monstruos:
+godzilla = UnMonstruo{tamanio=100,peligrosidad=5,caracteristicas=["terreste","colmillos"]}
+
+sullivan = UnMonstruo{tamanio=50,peligrosidad=1,caracteristicas=["pelos","simpatico"]}
+
+caracteristicasTerribles=["colmillos","garra","coraza","aguijon"]
+
+-- Cazadores:
+
+hunter = UnCazador{nombre="Hunter",medallas=1,puntaje=100,especialidad=acuatico}
+chasseur = UnCazador{nombre="Chasseur",medallas=0,puntaje=5000,especialidad=todoTerreno 50}
+-- damePuntaje monstruo = (((tamanio monstruo)`div`100)*20)*2*(peligrosidad monstruo)
+-- esTerreste monstruo= elem "terreste" (caracteristicas monstruo) 
+
+puntosPorCaza  monstruo | any (`elem` (caracteristicas monstruo)) caracteristicasTerribles  = 10 + ((tamanio monstruo)*0.2*2*(peligrosidad monstruo))
+						|otherwise = ((tamanio monstruo)*0.2*2*(peligrosidad monstruo))
+
+-- FALTA EXPLICAR SIMILITUDES Y DIFERENCIAS DEL PARADIGMAS FUNCIONAL CON EL LOGICO
+
+acuatico monstruo = elem "acuatico" (caracteristicas monstruo)
+
+peliplumifero monstruo = elem "pelos" (caracteristicas monstruo) || elem "plumas" (caracteristicas monstruo)
+
+todoTerreno valor monstruo = (tamanio monstruo) > valor && 3<(peligrosidad monstruo) && (peligrosidad monstruo)<6
+
+cazador3 = UnCazador {nombre="Randy",medallas=5,puntaje=50,especialidad=acuatico}
+
+cazador4 = UnCazador {nombre="Jimbo",medallas=7,puntaje=60,especialidad=peliplumifero}
+
+cazador5 = UnCazador {nombre="Ned",medallas=6,puntaje=55,especialidad=todoTerreno 60}
+
+puntosCazador cazador  lista = sum (map puntosPorCaza (filter (especialidad cazador) lista))
+
+darMedalla cazador = cazador {nombre=(nombre cazador),medallas=((medallas cazador) +1),puntaje=((puntaje cazador)+100.0),especialidad=(especialidad cazador) }
+
+-- aca el tema es que no estoy usando la funcion darMedalla la idea es reusarla pero no se me ocurre como aplicarla y sumar punos de caza al mismo tiempo
+postCaceria cazador lista	| (monstruosCazados cazador lista)>2= cazador{nombre=(nombre cazador),medallas=(medallas cazador +1),puntaje=(puntosCazador cazador),especialidad=(especialidad cazador)}
+							|otherwise = cazador{nombre=(nombre cazador),medallas=(medallas cazador +1),puntaje=(puntosCazador cazador),especialidad=(especialidad cazador)}
+
+monstruosCazados cazador lista = length (filter (especialidad cazador) lista)
+
+insectoide monstruo = elem "aguijon" (caracteristicas monstruo)
+
+darEspecialidad cazador especialidadNueva = cazador {nombre=(nombre cazador),medallas=(medallas cazador),puntaje=(puntaje cazador),especialidad=(especialidadNueva)}
